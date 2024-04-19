@@ -1,8 +1,8 @@
-package employee_management.service;
+package gestion_administrative.service;
 
 import java.util.List;
 
-import employee_management.entities.Niveau;
+import gestion_administrative.entities.Niveau;
 
 
 public interface NiveauService {
@@ -13,4 +13,5 @@ public interface NiveauService {
     public Niveau getById(int id);
 	public List<Niveau> saveAll(List<Niveau> niveaus);
 	public boolean existsByCodeNiv(String codeNiv);
+
 }

@@ -1,4 +1,4 @@
-package employee_management;
+package gestion_administrative;
 
 import org.springframework.context.annotation.Configuration;
 

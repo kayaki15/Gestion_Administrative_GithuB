@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Structure Management</title>
-        <link rel="stylesheet" type="text/css" href="../css/niveauDiscipline.css">
+    <link rel="stylesheet" type="text/css" href="../css/niveauDiscipline.css">
 </head>
 <body>
 
@@ -42,8 +42,6 @@
     <button type="submit">Add Structure</button>
 </form>
 
-
-
 <!-- Modify the response div to include a success message -->
 <div id="response" class="success-message" style="display: none;"></div>
 
@@ -56,8 +54,6 @@
             <th>ID</th>
             <th>Code</th>
             <th>Number of Classes</th>
-            <th>Niveau</th>
-            <th>Etablissement</th>
             <th>Actions</th> <!-- Add column for actions -->
         </tr>
     </thead>
@@ -87,10 +83,7 @@ fetch('/niveau/all')
     console.error('Error fetching Niveau:', error);
 });
 
-
-
-
-//Fetch Etablissement options
+// Fetch Etablissement options
 fetch('/etablissements/all')
 .then(response => response.json())
 .then(data => {
@@ -107,149 +100,144 @@ fetch('/etablissements/all')
     console.error('Error fetching Etablissement:', error);
 });
 
-    // JavaScript code for handling form submissions, fetching data, and deleting structures will go here...
+document.getElementById("importForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    var formData = new FormData(this);
 
-    document.getElementById("importForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        var formData = new FormData(this);
-
-        fetch('/structure/import', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.startsWith('Error')) {
-                // Display error message in red
-                document.getElementById("errorMessage").innerText = data;
-                document.getElementById("errorMessage").style.display = "block";
-                document.getElementById("response").style.display = "none";
-            } else {
-                // Display success message in green
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-            }
-
-            // Refresh table data
-            fetchStructures();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-    document.getElementById("structureForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        var formData = new FormData(this);
-        var codeStr = formData.get("codeStr");
-        var nbrClasse = formData.get("nbrClasse");
-        var niveauCode = formData.get("niveauCode"); // Add this line to retrieve niveau code
-        var etablissementCode = formData.get("etablissementCode"); // Add this line to retrieve etablissement code
-        
-        var jsonData = {
-            "codeStr": codeStr,
-            "nbrClasse": parseInt(nbrClasse),
-            "niveauCode": niveauCode, // Include niveau code in the JSON payload
-            "etablissementCode": etablissementCode // Include etablissement code in the JSON payload
-        };
-
-        fetch('/structure/insert', {
-            method: 'POST',
-            body: JSON.stringify(jsonData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.startsWith('Error')) {
-                // Display error message in red
-                document.getElementById("errorMessage").innerText = data;
-                document.getElementById("errorMessage").style.display = "block";
-                document.getElementById("response").style.display = "none";
-            } else {
-                // Display success message in green
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-            }
-            
-            // Clear form fields
-            document.getElementById("codeStr").value = "";
-            document.getElementById("nbrClasse").value = "";
-            document.getElementById("niveau").value = "";
-            document.getElementById("etablissement").value = "";
-
-            // Refresh table data
-            fetchStructures();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-
-    function fetchStructures() {
-        fetch('/structure/all')
-        .then(response => response.json())
-        .then(data => {
-            var structureTableBody = document.querySelector("#structureTable tbody");
-            structureTableBody.innerHTML = "";
-            data.forEach(function(structure) {
-                var row = `<tr>
-                    <td>${structure.id}</td>
-                    <td>${structure.codeStr}</td>
-                    <td>${structure.nbrClasse}</td>
-                    <td>${structure.niveau}</td>
-                    <td>${structure.etablissement}</td>
-                    <td><button onclick="deleteStructure(${structure.id})">Delete</button></td>
-                </tr>`;
-                structureTableBody.innerHTML += row;
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    function deleteStructure(id) {
-        if (confirm("Are you sure you want to delete this structure?")) {
-            fetch(`/structure/delete/${id}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-                fetchStructures();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+    fetch('/structure/import', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data.startsWith('Error')) {
+            // Display error message in red
+            document.getElementById("errorMessage").innerText = data;
+            document.getElementById("errorMessage").style.display = "block";
+            document.getElementById("response").style.display = "none";
+        } else {
+            // Display success message in green
+            document.getElementById("response").innerText = data;
+            document.getElementById("response").style.display = "block";
+            document.getElementById("errorMessage").style.display = "none";
         }
+
+        // Refresh table data
+        fetchStructures();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+document.getElementById("structureForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    var formData = new FormData(this);
+    var codeStr = formData.get("codeStr");
+    var nbrClasse = formData.get("nbrClasse");
+    var niveauCode = formData.get("niveauCode"); // Add this line to retrieve niveau code
+    var etablissementCode = formData.get("etablissementCode"); // Add this line to retrieve etablissement code
+    
+    var jsonData = {
+        "codeStr": codeStr,
+        "nbrClasse": parseInt(nbrClasse),
+        "niveauCode": niveauCode, // Include niveau code in the JSON payload
+        "etablissementCode": etablissementCode // Include etablissement code in the JSON payload
+    };
+
+    fetch('/structure/insert', {
+        method: 'POST',
+        body: JSON.stringify(jsonData),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data.startsWith('Error')) {
+            // Display error message in red
+            document.getElementById("errorMessage").innerText = data;
+            document.getElementById("errorMessage").style.display = "block";
+            document.getElementById("response").style.display = "none";
+        } else {
+            // Display success message in green
+            document.getElementById("response").innerText = data;
+            document.getElementById("response").style.display = "block";
+            document.getElementById("errorMessage").style.display = "none";
+        }
+        
+        // Clear form fields
+        document.getElementById("codeStr").value = "";
+        document.getElementById("nbrClasse").value = "";
+        document.getElementById("niveau").value = "";
+        document.getElementById("etablissement").value = "";
+
+        // Refresh table data
+        fetchStructures();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+function fetchStructures() {
+    fetch('/structure/all')
+    .then(response => response.json())
+    .then(data => {
+        var structureTableBody = document.querySelector("#structureTable tbody");
+        structureTableBody.innerHTML = "";
+        data.forEach(function(structure) {
+            var row = `<tr>
+                <td>${structure.id}</td>
+                <td>${structure.codeStr}</td>
+                <td>${structure.nbrClasse}</td>
+                <td><button onclick="deleteStructure(${structure.id})">Delete</button></td>
+            </tr>`;
+            structureTableBody.innerHTML += row;
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function deleteStructure(id) {
+    if (confirm("Are you sure you want to delete this structure?")) {
+        fetch(`/structure/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("response").innerText = data;
+            document.getElementById("response").style.display = "block";
+            document.getElementById("errorMessage").style.display = "none";
+            fetchStructures();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
+}
 
-    // Event listener for the import button
-    document.getElementById("importButton").addEventListener("click", function() {
-        document.getElementById("file").click();
-    });
+// Event listener for the import button
+document.getElementById("importButton").addEventListener("click", function() {
+    document.getElementById("file").click();
+});
 
-    // Fetch Structures when the page loads
-    fetchStructures();
+// Fetch Structures when the page loads
+fetchStructures();
 
-    // Fetch header.html when the page loads
-    window.addEventListener('DOMContentLoaded', function() {
-        fetch('../html/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('container').innerHTML = data;
-            })
-            .catch(error => console.error('Error fetching header:', error));
-    });
+// Fetch header.html when the page loads
+window.addEventListener('DOMContentLoaded', function() {
+    fetch('../html/header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('container').innerHTML = data;
+        })
+        .catch(error => console.error('Error fetching header:', error));
+});
 </script>
 </body>
 </html>

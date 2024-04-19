@@ -1,4 +1,4 @@
-package employee_management.controller;
+package gestion_administrative.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,10 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import employee_management.entities.Etablissement;
-import employee_management.entities.Niveau;
-import employee_management.helper.ExcelHelper;
-import employee_management.service.NiveauService;
+import gestion_administrative.entities.Etablissement;
+import gestion_administrative.entities.Niveau;
+import gestion_administrative.helper.ExcelHelper;
+import gestion_administrative.service.NiveauService;
 
 
 

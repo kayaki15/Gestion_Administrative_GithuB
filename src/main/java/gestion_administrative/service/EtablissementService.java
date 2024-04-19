@@ -1,8 +1,8 @@
-package employee_management.service;
+package gestion_administrative.service;
 
 import java.util.List;
 
-import employee_management.entities.Etablissement;
+import gestion_administrative.entities.Etablissement;
 
 public interface EtablissementService {
     public Etablissement save(Etablissement etablissement);
@@ -10,4 +10,7 @@ public interface EtablissementService {
     public List<Etablissement> getAll();
     public Etablissement getById(int id);
 	public List<Etablissement> saveAll(List<Etablissement> etablissement);
+	public  Etablissement getByCode(String codeEtab) ; 
+
+
 }

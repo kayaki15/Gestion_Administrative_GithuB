@@ -1,4 +1,4 @@
-package employee_management.controller;
+package gestion_administrative.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import employee_management.entities.Discipline;
-import employee_management.helper.ExcelHelper;
-import employee_management.service.DisciplineService;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.helper.ExcelHelper;
+import gestion_administrative.service.DisciplineService;
 
 @RestController
 @RequestMapping("/disciplines")

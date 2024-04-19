@@ -1,4 +1,4 @@
-package employee_management.entities;
+package gestion_administrative.entities;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Entity;

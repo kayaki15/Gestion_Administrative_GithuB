@@ -1,9 +1,9 @@
-package employee_management.dao;
+package gestion_administrative.dao;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import employee_management.entities.NivDiscip;
+import gestion_administrative.entities.NivDiscip;
 
 
 public interface NivDiscipDao extends JpaRepository<NivDiscip, Integer> {

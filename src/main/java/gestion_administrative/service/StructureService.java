@@ -1,8 +1,8 @@
-package employee_management.service;
+package gestion_administrative.service;
 
 import java.util.List;
 
-import employee_management.entities.Structure;
+import gestion_administrative.entities.Structure;
 
 public interface StructureService {
 	

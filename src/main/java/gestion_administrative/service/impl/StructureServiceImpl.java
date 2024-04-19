@@ -1,4 +1,4 @@
-package employee_management.service.impl;
+package gestion_administrative.service.impl;
 
 import java.util.List;
 
@@ -7,10 +7,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import employee_management.dao.StructureDao;
-import employee_management.entities.Etablissement;
-import employee_management.entities.Structure;
-import employee_management.service.StructureService;
+import gestion_administrative.dao.StructureDao;
+import gestion_administrative.entities.Etablissement;
+import gestion_administrative.entities.Structure;
+import gestion_administrative.service.StructureService;
 
 
 

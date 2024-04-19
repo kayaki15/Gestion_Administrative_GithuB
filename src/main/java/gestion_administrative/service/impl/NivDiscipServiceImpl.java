@@ -1,4 +1,4 @@
-package employee_management.service.impl;
+package gestion_administrative.service.impl;
 
 import java.util.List;
 
@@ -7,9 +7,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import employee_management.dao.NivDiscipDao;
-import employee_management.entities.NivDiscip;
-import employee_management.service.NivDiscipService;
+import gestion_administrative.dao.NivDiscipDao;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.entities.NivDiscip;
+import gestion_administrative.service.NivDiscipService;
 
 
 @Component
@@ -43,6 +44,14 @@ public class NivDiscipServiceImpl implements NivDiscipService {
 	public boolean existsByCodeNivDiscip(String codeNivDiscip) {
 	return this.existsByCodeNivDiscip(codeNivDiscip);
 	}
+
+	
+	@Override
+	public List<NivDiscip> saveAll(List<NivDiscip> nivDiscips) {
+	return nivDiscipDao.saveAll(nivDiscips)	;
+	}
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package employee_management.controller;
+package gestion_administrative.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,12 +24,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import employee_management.entities.Discipline;
-import employee_management.entities.Niveau;
-import employee_management.entities.NivDiscip;
-import employee_management.service.DisciplineService;
-import employee_management.service.NivDiscipService;
-import employee_management.service.NiveauService;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.entities.NivDiscip;
+import gestion_administrative.entities.Niveau;
+import gestion_administrative.entities.Structure;
+import gestion_administrative.helper.ExcelHelper;
+import gestion_administrative.service.DisciplineService;
+import gestion_administrative.service.NivDiscipService;
+import gestion_administrative.service.NiveauService;
 
 @RestController
 @RequestMapping("/niv_discip")
@@ -140,4 +144,21 @@ public class NivDiscipController {
             return new ResponseEntity<>("No Niv_Discips found", HttpStatus.NOT_FOUND);
         }
     }
+    
+    @PostMapping("/import")
+    public ResponseEntity<String> importNivDiscips(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please upload a file");
+        }
+
+        try {
+            List<NivDiscip> nivDiscips = ExcelHelper.excelToNivDiscip(file.getInputStream());
+            nivDiscipService.saveAll(nivDiscips);
+            return ResponseEntity.ok("NivDiscips imported successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while importing N: " + e.getMessage());
+        }
+    }
+   
 }

@@ -1,4 +1,4 @@
-package employee_management;
+package gestion_administrative;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

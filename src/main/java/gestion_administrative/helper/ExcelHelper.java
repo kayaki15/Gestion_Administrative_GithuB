@@ -1,11 +1,13 @@
-package employee_management.helper;
+package gestion_administrative.helper;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import employee_management.entities.Discipline;
-import employee_management.entities.Etablissement;
-import employee_management.entities.Niveau;
-import employee_management.entities.Structure;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.entities.Etablissement;
+import gestion_administrative.entities.NivDiscip;
+import gestion_administrative.entities.Niveau;
+import gestion_administrative.entities.Structure;
+import gestion_administrative.service.NiveauService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,11 +132,10 @@ public class ExcelHelper {
             structure.setNbrClasse(nbrClasse);
 
             // Fetch Niveau object from database based on niveauCode and set it to structure
-            // Example: Niveau niveau = niveauService.getByCode(niveauCode);
-            // structure.setNiveau(niveau);
+            // Example: Niveau niveau = NiveauService.getByCode(niveauCode);structure.setNiveau(niveau);
 
             // Fetch Etablissement object from database based on etablissementCode and set it to structure
-            // Example: Etablissement etablissement = etablissementService.getByCode(etablissementCode);
+            // Example: Etablissement etablissement = EtablissementService.getByCode(etablissementCode);
             // structure.setEtablissement(etablissement);
 
             structures.add(structure);
@@ -145,5 +146,55 @@ public class ExcelHelper {
         return structures;
     }
 
-   
+
+	
+	
+	
+	
+    public static List<NivDiscip> excelToNivDiscip(InputStream is) throws IOException {
+        Workbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rows = sheet.iterator();
+
+        List<NivDiscip> nivDiscips = new ArrayList<>();
+
+        // Skip the header row
+        if (rows.hasNext()) {
+            rows.next(); // Skip the header row
+        }
+
+        while (rows.hasNext()) {
+            Row currentRow = rows.next();
+
+            // Read data from each cell in the row
+            String codeNivDiscip = currentRow.getCell(0).getStringCellValue();
+            int nbreHeures = (int) currentRow.getCell(3).getNumericCellValue(); // Assuming the HEUR_SEMAINE column is the fourth column (index 3)
+            String disciplineCode = currentRow.getCell(2).getStringCellValue(); // Assuming the CD_DISCIP column is the third column (index 2)
+            String niveauCode = currentRow.getCell(1).getStringCellValue(); // Assuming the CD_NIVEAU column is the second column (index 1)
+
+            // Retrieve Discipline and Niveau objects by code
+//            Discipline discipline = disciplineService.getByCode(disciplineCode);
+//            Niveau niveau = niveauService.getByCode(niveauCode);
+
+//            if (discipline != null && niveau != null) {
+                // Create a new NivDiscip object
+                NivDiscip nivDiscip = new NivDiscip();
+                nivDiscip.setCodeNivDiscip(codeNivDiscip);
+                nivDiscip.setNbreHeures(nbreHeures);
+//                nivDiscip.setDiscipline(discipline);
+//                nivDiscip.setNiveau(niveau);
+
+                // Add the NivDiscip to the list
+                nivDiscips.add(nivDiscip);
+            }
+        
+
+        workbook.close();
+
+        return nivDiscips;
+    }
+
+	
 }
+
+  

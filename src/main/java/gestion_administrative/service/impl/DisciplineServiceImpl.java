@@ -1,4 +1,4 @@
-package employee_management.service.impl;
+package gestion_administrative.service.impl;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import employee_management.dao.DisciplineDao;
-import employee_management.entities.Discipline;
-import employee_management.service.DisciplineService;
+import gestion_administrative.dao.DisciplineDao;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.service.DisciplineService;
 
 
 @Component
@@ -53,9 +53,18 @@ public class DisciplineServiceImpl implements DisciplineService {
     }
 
 
-@Override
-public List<Discipline> saveAll(List<Discipline> discipline) {
-return disciplineDao.saveAll(discipline)	;
-}
+		@Override
+		public List<Discipline> saveAll(List<Discipline> discipline) {
+		return disciplineDao.saveAll(discipline)	;
+		}
+
+
+		@Override
+		public Discipline getBycodeDiscip(String codeDiscip) {
+	        return disciplineDao.getBycodeDiscip(codeDiscip);
+	        		
+		}
+		
+		
 
 }

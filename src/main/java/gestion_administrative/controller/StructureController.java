@@ -1,4 +1,4 @@
-package employee_management.controller;
+package gestion_administrative.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,9 +23,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import employee_management.entities.Structure;
-import employee_management.helper.ExcelHelper;
-import employee_management.service.StructureService;
+import gestion_administrative.entities.Structure;
+import gestion_administrative.helper.ExcelHelper;
+import gestion_administrative.service.StructureService;
 
 @RestController
 @RequestMapping("/structure")
@@ -60,21 +60,7 @@ public class StructureController {
         return new ResponseEntity<>("Structure inserted successfully", HttpStatus.CREATED);
     }
 
-    @PostMapping("/import")
-    public ResponseEntity<String> importStructures(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Please upload a file");
-        }
-
-        try {
-            List<Structure> structures = ExcelHelper.excelToStructures(file.getInputStream());
-            structureService.saveAll(structures);
-            return ResponseEntity.ok("Structures imported successfully");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while importing Structures: " + e.getMessage());
-        }
-    }
+   
 
     @PutMapping("/update")
     public ResponseEntity<String> updateStructure(@RequestBody String structureJson) throws JsonParseException, JsonMappingException, IOException {
@@ -136,6 +122,20 @@ public class StructureController {
             return new ResponseEntity<>("No structure found", HttpStatus.NOT_FOUND);
         }
     }
+    @PostMapping("/import")
+    public ResponseEntity<String> importStructures(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please upload a file");
+        }
 
+        try {
+            List<Structure> structures = ExcelHelper.excelToStructures(file.getInputStream());
+            structureService.saveAll(structures);
+            return ResponseEntity.ok("Structures imported successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while importing Structures: " + e.getMessage());
+        }
+    }
 	
 }

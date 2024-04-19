@@ -1,4 +1,4 @@
-package employee_management.service.impl;
+package gestion_administrative.service.impl;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import employee_management.dao.EtablissementDao;
-import employee_management.entities.Etablissement;
-import employee_management.service.EtablissementService;
+import gestion_administrative.dao.EtablissementDao;
+import gestion_administrative.entities.Etablissement;
+import gestion_administrative.service.EtablissementService;
 
 @Component
 @Transactional
@@ -44,4 +44,12 @@ public class EtablissementServiceImpl implements EtablissementService {
 	public List<Etablissement> saveAll(List<Etablissement> etablissement) {
 	return etablissementDao.saveAll(etablissement)	;
 	}
+
+	@Override
+	public Etablissement getByCode(String codeEtab) {
+	    return this.etablissementDao.getByCodeEtab(codeEtab);
+	}
+
+
+
 }

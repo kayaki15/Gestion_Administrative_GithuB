@@ -1,8 +1,9 @@
-package employee_management.service;
+package gestion_administrative.service;
 
 import java.util.List;
 
-import employee_management.entities.Discipline;
+import gestion_administrative.entities.Discipline;
+import gestion_administrative.entities.Etablissement;
 
 
 public interface DisciplineService {
@@ -13,5 +14,5 @@ public interface DisciplineService {
 	public Discipline getByCodeAndName(String codeDiscip, String nomDiscip);
 	public Discipline update(Discipline discipline);
 	public List<Discipline> saveAll(List<Discipline> discipline);
-	
+	public Discipline getBycodeDiscip(String codeDiscip);
 }
