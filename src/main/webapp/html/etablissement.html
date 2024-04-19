@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etablissement Management</title>
+    <link rel="stylesheet" type="text/css" href="../css/etablissement.css">
+</head>
+<body>
+
+<!-- Import header.html -->
+<div id="container"></div>
+<!-- ---------------- -->
+
+<h1>Etablissement Management System</h1>
+
+<!-- New form for importing Etablissements from Excel -->
+<form id="importForm" enctype="multipart/form-data">
+    <label for="file">Import Etablissements from Excel:</label>
+    <input type="file" id="file" name="file" accept=".xlsx, .xls" required>
+    <button type="submit">Import</button>
+</form>
+
+<!-- Modify the existing form for adding Etablissements -->
+<form id="etablissementForm">
+    <label for="codeEtab">Code:</label>
+    <input type="text" id="codeEtab" name="codeEtab" required><br>
+
+    <label for="nomEtab">Nom:</label>
+    <input type="text" id="nomEtab" name="nomEtab" required><br>
+
+    <button type="submit">Add Etablissement</button>
+</form>
+
+<!-- Modify the response div to include a success message -->
+<div id="response" class="success-message" style="display: none;"></div>
+
+<div id="errorMessage" class="error-message" style="display: none;"></div>
+
+<h2>All Etablissements</h2>
+<table id="etablissementTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Nom</th>
+            <th>Actions</th> <!-- Add column for actions -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Etablissements will be populated here dynamically -->
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("importForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        var formData = new FormData(this);
+
+        fetch('/etablissements/import', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data.startsWith('Error')) {
+                // Display error message in red
+                document.getElementById("errorMessage").innerText = data;
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("response").style.display = "none";
+            } else {
+                // Display success message in green
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+            }
+
+            // Refresh table data
+            fetchEtablissements();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    document.getElementById("etablissementForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        var formData = new FormData(this);
+        var jsonObject = {};
+        formData.forEach(function(value, key){
+            jsonObject[key] = value;
+        });
+        var jsonData = JSON.stringify(jsonObject);
+        
+        fetch('/etablissements/insert', {
+            method: 'POST',
+            body: jsonData,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data.startsWith('Error')) {
+                // Display error message in red
+                document.getElementById("errorMessage").innerText = data;
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("response").style.display = "none";
+            } else {
+                // Display success message in green
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+            }
+            
+            // Clear form fields
+            document.getElementById("codeEtab").value = "";
+            document.getElementById("nomEtab").value = "";
+
+            // Refresh table data
+            fetchEtablissements();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    function fetchEtablissements() {
+        fetch('/etablissements/all')
+        .then(response => response.json())
+        .then(data => {
+            var etablissementTableBody = document.querySelector("#etablissementTable tbody");
+            etablissementTableBody.innerHTML = "";
+            data.forEach(function(etablissement) {
+                var row = `<tr>
+                    <td>${etablissement.idEtabli}</td>
+                    <td>${etablissement.codeEtab}</td>
+                    <td>${etablissement.nomEtab}</td>
+                    <td><button onclick="deleteEtablissement(${etablissement.idEtabli})">Delete</button></td>
+                </tr>`;
+                etablissementTableBody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function deleteEtablissement(id) {
+        if (confirm("Are you sure you want to delete this etablissement?")) {
+            fetch(`/etablissements/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+                fetchEtablissements();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+
+    fetchEtablissements();
+
+    window.addEventListener('DOMContentLoaded', function() {
+        fetch('../html/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('container').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching header:', error));
+    });
+</script>
+</body>
+</html>

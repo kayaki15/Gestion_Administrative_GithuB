@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NivDiscip</title>
+    <link rel="stylesheet" type="text/css" href="../css/niveauDiscipline.css">
+</head>
+<body>
+
+<!-- import header.html -->
+        <div id="container"></div>
+        
+<!--         ---------------- -->
+    <h1>NivDiscip</h1>
+    <form id="nivDiscipForm">
+        <label for="nbreHeures">Nombre Heures:</label>
+        <input type="text" id="nbreHeures" name="nbreHeures" required><br>
+
+        <!-- Dropdown for selecting Discipline -->
+        <label for="discipline">Select Discipline:</label>
+        <select id="discipline" name="discipline" required>
+            <option value="">Select Discipline</option>
+            <!-- Options will be populated dynamically -->
+        </select><br>
+
+        <!-- Dropdown for selecting Niveau -->
+        <label for="niveau">Select Niveau:</label>
+        <select id="niveau" name="niveau" required>
+            <option value="">Select Niveau</option>
+            <!-- Options will be populated dynamically -->
+        </select><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="response"></div>
+
+    <h2>All NivDiscips</h2>
+    <table id="nivDiscipTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code NivDiscip</th>
+                <th>Nombre Heures</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- NivDiscips will be populated here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+    document.getElementById("nivDiscipForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        var formData = new FormData(this);
+        var jsonObject = {};
+        formData.forEach(function(value, key){
+            // Keep discipline and niveau values as strings
+            jsonObject[key] = value;
+        });
+
+        // Automatically generate Code NivDiscip if Discipline and Niveau are selected
+        if (jsonObject["discipline"] && jsonObject["niveau"]) {
+            jsonObject["codeNivDiscip"] = jsonObject["discipline"] + jsonObject["niveau"];
+        }
+
+        var jsonData = JSON.stringify(jsonObject);
+        
+        fetch('/niv_discip/insert', {
+            method: 'POST',
+            body: jsonData,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("response").innerHTML = data;
+            fetchNivDiscips();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    function fetchNivDiscips() {
+        fetch('/niv_discip/all')
+        .then(response => response.json())
+        .then(data => {
+            var nivDiscipTableBody = document.querySelector("#nivDiscipTable tbody");
+            nivDiscipTableBody.innerHTML = "";
+            data.forEach(function(nivDiscip) {
+                var row = `<tr>
+                    <td>${nivDiscip.idNivDiscip}</td>
+                    <td>${nivDiscip.codeNivDiscip}</td>
+                    <td>${nivDiscip.nbreHeures}</td>
+                </tr>`;
+                nivDiscipTableBody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function fetchDisciplinesAndNiveaux() {
+        fetch('/disciplines/all')
+        .then(response => response.json())
+        .then(data => {
+            var disciplineDropdown = document.getElementById("discipline");
+            disciplineDropdown.innerHTML = "<option value=''>Select Discipline</option>";
+            data.forEach(function(discipline) {
+                var option = document.createElement("option");
+                option.value = discipline.id;
+                option.text = discipline.nomDiscip;
+                disciplineDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        fetch('/niveau/all')
+        .then(response => response.json())
+        .then(data => {
+            var niveauDropdown = document.getElementById("niveau");
+            niveauDropdown.innerHTML = "<option value=''>Select Niveau</option>";
+            data.forEach(function(niveau) {
+                var option = document.createElement("option");
+                option.value = niveau.id;
+                option.text = niveau.nomNiv;
+                niveauDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    fetchDisciplinesAndNiveaux();
+
+
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        fetch('../html/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('container').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching header:', error));
+    });
+
+    </script>
+</body>
+</html>

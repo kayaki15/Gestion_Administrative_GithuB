@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discipline</title>
+    <link rel="stylesheet" type="text/css" href="../css/discipline.css">
+</head>
+<body>
+<!-- import header.html -->
+        <div id="container"></div>
+        
+<!--         ---------------- -->
+
+<h1>Discipline</h1>
+
+<!-- New form for importing disciplines from Excel -->
+<form id="importForm" enctype="multipart/form-data">
+    <label for="file">Import Disciplines from Excel:</label>
+    <input type="file" id="file" name="file" accept=".xlsx, .xls" required>
+    <button type="submit">Import</button>
+</form>
+
+<!-- Modify the existing form for adding disciplines -->
+<form id="disciplineForm">
+    <label for="codeDiscip">codeDiscip :</label>
+    <input type="text" id="codeDiscip" name="codeDiscip" required><br>
+
+    <label for="nomDiscip">nomDiscip :</label>
+    <input type="text" id="nomDiscip" name="nomDiscip" required><br>
+
+    <button type="submit">Add Discipline</button>
+</form>
+
+<!-- Modify the response div to include a success message -->
+<div id="response" class="success-message" style="display: none;"></div>
+
+<div id="errorMessage" class="error-message" style="display: none;"></div>
+
+<h2>All Disciplines</h2>
+<table id="disciplineTable">
+    <thead>
+        <tr>
+            <th>disciplineID:</th>
+            <th>codeDiscip</th>
+            <th>nomDiscip</th>
+            <th>Actions</th> <!-- Add column for actions -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Disciplines will be populated here dynamically -->
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("importForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        var formData = new FormData(this);
+
+        fetch('/disciplines/import', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data.startsWith('Error')) {
+                // Display error message in red
+                document.getElementById("errorMessage").innerText = data;
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("response").style.display = "none";
+            } else {
+                // Display success message in green
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+            }
+
+            // Refresh table data
+            fetchDisciplines();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    document.getElementById("disciplineForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        var formData = new FormData(this);
+        var jsonObject = {};
+        formData.forEach(function(value, key){
+            jsonObject[key] = value;
+        });
+        var jsonData = JSON.stringify(jsonObject);
+        
+        fetch('/disciplines/insert', {
+            method: 'POST',
+            body: jsonData,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data.startsWith('Error')) {
+                // Display error message in red
+                document.getElementById("errorMessage").innerText = data;
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("response").style.display = "none";
+            } else {
+                // Display success message in green
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+            }
+            
+            // Clear form fields
+            document.getElementById("codeDiscip").value = "";
+            document.getElementById("nomDiscip").value = "";
+
+            // Refresh table data
+            fetchDisciplines();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+
+//     document.getElementById("disciplineForm").addEventListener("submit", function(event) {
+//         event.preventDefault();
+        
+//         var formData = new FormData(this);
+//         var jsonObject = {};
+//         formData.forEach(function(value, key){
+//             jsonObject[key] = value;
+//         });
+//         var jsonData = JSON.stringify(jsonObject);
+        
+//         fetch('/disciplines/insert', {
+//             method: 'POST',
+//             body: jsonData,
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             }
+//         })
+//         .then(response => response.text())
+//         .then(data => {
+//             if (data.startsWith('Error')) {
+//                 // Display error message in red
+//                 document.getElementById("errorMessage").innerText = data;
+//                 document.getElementById("errorMessage").style.display = "block";
+//                 document.getElementById("response").style.display = "none";
+//             } else {
+//                 // Display success message in green
+//                 document.getElementById("response").innerText = data;
+//                 document.getElementById("response").style.display = "block";
+//                 document.getElementById("errorMessage").style.display = "none";
+//             }
+            
+//             // Clear form fields
+//             document.getElementById("codeDiscip").value = "";
+//             document.getElementById("nomDiscip").value = "";
+
+//             // Refresh table data
+//             fetchDisciplines();
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//         });
+//     });
+
+    function fetchDisciplines() {
+        fetch('/disciplines/all')
+        .then(response => response.json())
+        .then(data => {
+            var disciplineTableBody = document.querySelector("#disciplineTable tbody");
+            disciplineTableBody.innerHTML = "";
+            data.forEach(function(discipline) {
+                var row = `<tr>
+                    <td>${discipline.id}</td>
+                    <td>${discipline.codeDiscip}</td>
+                    <td>${discipline.nomDiscip}</td>
+                    <td><button onclick="deleteDiscipline(${discipline.id})">Delete</button></td>
+                </tr>`;
+                disciplineTableBody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function deleteDiscipline(id) {
+        if (confirm("Are you sure you want to delete this discipline?")) {
+            fetch(`/disciplines/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("response").innerText = data;
+                document.getElementById("response").style.display = "block";
+                document.getElementById("errorMessage").style.display = "none";
+                fetchDisciplines();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+    
+    
+    fetchDisciplines();
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        fetch('../html/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('container').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching header:', error));
+    });
+
+
+</script>
+</body>
+</html>
