@@ -1,228 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discipline</title>
     <link rel="stylesheet" type="text/css" href="../css/discipline.css">
 </head>
+
 <body>
-<!-- import header.html -->
-        <div id="container"></div>
-        
-<!--         ---------------- -->
+    <!-- import header.html -->
+    <div id="container"></div>
+    <!-- ---------------- -->
 
-<h1>Discipline</h1>
+    <h1>Discipline</h1>
 
-<!-- New form for importing disciplines from Excel -->
-<form id="importForm" enctype="multipart/form-data">
-    <label for="file">Import Disciplines from Excel:</label>
-    <input type="file" id="file" name="file" accept=".xlsx, .xls" required>
-    <button type="submit">Import</button>
-</form>
+    <h1>Search Disciplines</h1>
+    <form id="searchForm">
+        <label for="query">Search:</label>
+        <input type="text" id="query" name="query">
+        <button type="submit">Search</button>
+    </form>
 
-<!-- Modify the existing form for adding disciplines -->
-<form id="disciplineForm">
-    <label for="codeDiscip">codeDiscip :</label>
-    <input type="text" id="codeDiscip" name="codeDiscip" required><br>
+    <div id="searchResults"></div>
 
-    <label for="nomDiscip">nomDiscip :</label>
-    <input type="text" id="nomDiscip" name="nomDiscip" required><br>
+    <!-- New form for importing disciplines from Excel -->
+    <form id="importForm" enctype="multipart/form-data">
+        <label for="file">Import Disciplines from Excel:</label>
+        <input type="file" id="file" name="file" accept=".xlsx, .xls" required>
+        <button type="submit">Import</button>
+    </form>
+    <h2>Search Results</h2>
+    <table id="searchResultsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Search results will be populated here dynamically -->
+        </tbody>
+    </table>
 
-    <button type="submit">Add Discipline</button>
-</form>
+    <!-- Modify the existing form for adding disciplines -->
+    <form id="disciplineForm">
+        <label for="codeDiscip">codeDiscip :</label>
+        <input type="text" id="codeDiscip" name="codeDiscip"><br>
 
-<!-- Modify the response div to include a success message -->
-<div id="response" class="success-message" style="display: none;"></div>
+        <label for="nomDiscip">nomDiscip :</label>
+        <input type="text" id="nomDiscip" name="nomDiscip"><br>
 
-<div id="errorMessage" class="error-message" style="display: none;"></div>
-
-<h2>All Disciplines</h2>
-<table id="disciplineTable">
-    <thead>
-        <tr>
-            <th>disciplineID:</th>
-            <th>codeDiscip</th>
-            <th>nomDiscip</th>
-            <th>Actions</th> <!-- Add column for actions -->
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Disciplines will be populated here dynamically -->
-    </tbody>
-</table>
-
-<script>
-    document.getElementById("importForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        var formData = new FormData(this);
-
-        fetch('/disciplines/import', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.startsWith('Error')) {
-                // Display error message in red
-                document.getElementById("errorMessage").innerText = data;
-                document.getElementById("errorMessage").style.display = "block";
-                document.getElementById("response").style.display = "none";
-            } else {
-                // Display success message in green
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-            }
-
-            // Refresh table data
-            fetchDisciplines();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-    document.getElementById("disciplineForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        var formData = new FormData(this);
-        var jsonObject = {};
-        formData.forEach(function(value, key){
-            jsonObject[key] = value;
-        });
-        var jsonData = JSON.stringify(jsonObject);
-        
-        fetch('/disciplines/insert', {
-            method: 'POST',
-            body: jsonData,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.startsWith('Error')) {
-                // Display error message in red
-                document.getElementById("errorMessage").innerText = data;
-                document.getElementById("errorMessage").style.display = "block";
-                document.getElementById("response").style.display = "none";
-            } else {
-                // Display success message in green
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-            }
-            
-            // Clear form fields
-            document.getElementById("codeDiscip").value = "";
-            document.getElementById("nomDiscip").value = "";
-
-            // Refresh table data
-            fetchDisciplines();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
+        <button type="submit">Add Discipline</button>
+    </form>
 
 
-//     document.getElementById("disciplineForm").addEventListener("submit", function(event) {
-//         event.preventDefault();
-        
-//         var formData = new FormData(this);
-//         var jsonObject = {};
-//         formData.forEach(function(value, key){
-//             jsonObject[key] = value;
-//         });
-//         var jsonData = JSON.stringify(jsonObject);
-        
-//         fetch('/disciplines/insert', {
-//             method: 'POST',
-//             body: jsonData,
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         })
-//         .then(response => response.text())
-//         .then(data => {
-//             if (data.startsWith('Error')) {
-//                 // Display error message in red
-//                 document.getElementById("errorMessage").innerText = data;
-//                 document.getElementById("errorMessage").style.display = "block";
-//                 document.getElementById("response").style.display = "none";
-//             } else {
-//                 // Display success message in green
-//                 document.getElementById("response").innerText = data;
-//                 document.getElementById("response").style.display = "block";
-//                 document.getElementById("errorMessage").style.display = "none";
-//             }
-            
-//             // Clear form fields
-//             document.getElementById("codeDiscip").value = "";
-//             document.getElementById("nomDiscip").value = "";
+    <h2>All Disciplines</h2>
+    <table id="disciplineTable">
+        <thead>
+            <tr>
+                <th>disciplineID:</th>
+                <th>codeDiscip</th>
+                <th>nomDiscip</th>
+                <th>Actions</th> <!-- Add column for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Disciplines will be populated here dynamically -->
+        </tbody>
+    </table>
+    <script>
+        document.getElementById("importForm").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-//             // Refresh table data
-//             fetchDisciplines();
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//         });
-//     });
+            var formData = new FormData(this);
 
-    function fetchDisciplines() {
-        fetch('/disciplines/all')
-        .then(response => response.json())
-        .then(data => {
-            var disciplineTableBody = document.querySelector("#disciplineTable tbody");
-            disciplineTableBody.innerHTML = "";
-            data.forEach(function(discipline) {
-                var row = `<tr>
-                    <td>${discipline.id}</td>
-                    <td>${discipline.codeDiscip}</td>
-                    <td>${discipline.nomDiscip}</td>
-                    <td><button onclick="deleteDiscipline(${discipline.id})">Delete</button></td>
-                </tr>`;
-                disciplineTableBody.innerHTML += row;
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    function deleteDiscipline(id) {
-        if (confirm("Are you sure you want to delete this discipline?")) {
-            fetch(`/disciplines/delete/${id}`, {
-                method: 'DELETE'
+            fetch('/disciplines/import', {
+                method: 'POST',
+                body: formData
             })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("response").innerText = data;
-                document.getElementById("response").style.display = "block";
-                document.getElementById("errorMessage").style.display = "none";
-                fetchDisciplines();
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                .then(response => response.text())
+                .then(data => {
+                    if (data.startsWith('Error')) {
+                        // Display error message in red
+                        document.getElementById("errorMessage").innerText = data;
+                        document.getElementById("errorMessage").style.display = "block";
+                        document.getElementById("response").style.display = "none";
+                    } else {
+                        // Display success message in green
+                        document.getElementById("response").innerText = data;
+                        document.getElementById("response").style.display = "block";
+                        document.getElementById("errorMessage").style.display = "none";
+                    }
+
+                    // Refresh table data
+                    fetchDisciplines();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        document.getElementById("disciplineForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+            var jsonObject = {};
+            formData.forEach(function (value, key) {
+                jsonObject[key] = value;
             });
+            var jsonData = JSON.stringify(jsonObject);
+
+            fetch('/disciplines/insert', {
+                method: 'POST',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.startsWith('Error')) {
+                        // Display error message in red
+                        document.getElementById("errorMessage").innerText = data;
+                        document.getElementById("errorMessage").style.display = "block";
+                        document.getElementById("response").style.display = "none";
+                    } else {
+                        // Display success message in green
+                        document.getElementById("response").innerText = data;
+                        document.getElementById("response").style.display = "block";
+                        document.getElementById("errorMessage").style.display = "none";
+                    }
+
+                    // Clear form fields
+                    document.getElementById("codeDiscip").value = "";
+                    document.getElementById("nomDiscip").value = "";
+
+                    // Refresh table data
+                    fetchDisciplines();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        document.getElementById("searchForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            var query = document.getElementById("query").value;
+            fetch('/disciplines/search?query=' + query)
+                .then(response => response.json())
+                .then(data => {
+                    var searchResultsTable = document.getElementById("searchResultsTable");
+                    var searchResultsTableBody = searchResultsTable.querySelector("tbody");
+                    searchResultsTableBody.innerHTML = "";
+                    if (data && data.length > 0) {
+                        data.forEach(discipline => {
+                            var disciplineRow = document.createElement("tr");
+                            disciplineRow.innerHTML = `
+                            <td>${discipline.id}</td>
+                            <td>${discipline.codeDiscip}</td>
+                            <td>${discipline.nomDiscip}</td>
+                        `;
+                            searchResultsTableBody.appendChild(disciplineRow);
+                        });
+                        searchResultsTable.style.display = "block";
+                    } else {
+                        var noResultsRow = document.createElement("tr");
+                        noResultsRow.innerHTML = '<td colspan="3">No disciplines found.</td>';
+                        searchResultsTableBody.appendChild(noResultsRow);
+                        searchResultsTable.style.display = "block";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        function fetchDisciplines() {
+            fetch('/disciplines/all')
+                .then(response => response.json())
+                .then(data => {
+                    var disciplineTableBody = document.querySelector("#disciplineTable tbody");
+                    disciplineTableBody.innerHTML = "";
+                    data.forEach(function (discipline) {
+                        var row = `<tr data-id="${discipline.id}">
+    <td>${discipline.id}</td>
+    <td class="codeDiscip">${discipline.codeDiscip}</td>
+    <td class="nomDiscip">${discipline.nomDiscip}</td>
+    <td><button onclick="deleteDiscipline(${discipline.id})">Delete</button></td>
+    <td><button onclick="updateDiscipline(${discipline.id})">Edit</button></td>
+</tr>`;
+                        disciplineTableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
-    }
-    
-    
-    fetchDisciplines();
 
-
-    window.addEventListener('DOMContentLoaded', function() {
-        fetch('../html/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('container').innerHTML = data;
-            })
-            .catch(error => console.error('Error fetching header:', error));
-    });
-
-
-</script>
+        function deleteDiscipline(id) {
+            if (confirm("Are you sure you want to delete this discipline?")) {
+                fetch(`/disciplines/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById("response").innerText = data;
+                        document.getElementById("response").style.display = "block";
+                        document.getElementById("errorMessage").style.display = "none";
+                        fetchDisciplines();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+        fetchDisciplines();
+        window.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('container').innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching header:', error));
+        });
+    </script>
 </body>
+
 </html>

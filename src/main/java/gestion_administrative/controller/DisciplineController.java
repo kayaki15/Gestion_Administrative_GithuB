@@ -1,11 +1,16 @@
 package gestion_administrative.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,53 +44,29 @@ public class DisciplineController {
     private ObjectMapper objectMapper;
 
     @PostMapping("/insert")
-    public ResponseEntity<String> insertDiscipline(@RequestBody String disciplineJson) throws JsonParseException, JsonMappingException, IOException {
-        // Convert the JSON to a Discipline object
-        Discipline discipline = objectMapper.readValue(disciplineJson, Discipline.class);
-
-        // Check if a discipline with the same code and name already exists
-        Discipline existingDiscipline = disciplineService.getByCodeAndName(discipline.getCodeDiscip(), discipline.getNomDiscip());
-        if (existingDiscipline != null) {
-            // Discipline with the same code and name already exists
-            return new ResponseEntity<>("The discipline already exists in the database.", HttpStatus.BAD_REQUEST);
+public ResponseEntity<String> insertDiscipline(@Valid @RequestBody Discipline discipline, BindingResult bindingResult) throws JsonParseException, JsonMappingException, IOException {
+    // Check if there are validation errors
+    if (bindingResult.hasErrors()) {
+        // Construct error message
+        StringBuilder errorMessage = new StringBuilder();
+        for (FieldError error : bindingResult.getFieldErrors()) {
+            errorMessage.append(error.getDefaultMessage()).append("; ");
         }
-
-        // Insert the discipline
-        disciplineService.save(discipline);
-
-        return new ResponseEntity<>("Discipline inserted successfully", HttpStatus.CREATED);
+        return ResponseEntity.badRequest().body(errorMessage.toString());
     }
 
-
-    @PutMapping("/update")
-    public ResponseEntity<String> updateDiscipline(@RequestBody JsonNode requestBody) {
-        // Extract discipline ID from the request body
-        int disciplineId = requestBody.get("id").asInt();
-
-        // Retrieve existing discipline from the database
-        Discipline existingDiscipline = disciplineService.getById(disciplineId);
-
-        if (existingDiscipline == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Discipline not found");
-        }
-
-        // Update discipline fields from the request body
-        existingDiscipline.setCodeDiscip(requestBody.get("codeDiscip").asText());
-        existingDiscipline.setNomDiscip(requestBody.get("nomDiscip").asText());
-
-        // Save the updated discipline
-        Discipline updatedDiscipline = disciplineService.update(existingDiscipline);
-
-        // Prepare response JSON
-        ObjectNode responseJson = objectMapper.createObjectNode();
-        responseJson.put("id", updatedDiscipline.getIdDiscip());
-        responseJson.put("codeDiscip", updatedDiscipline.getCodeDiscip());
-        responseJson.put("nomDiscip", updatedDiscipline.getNomDiscip());
-
-        // Return the updated discipline as JSON
-        return ResponseEntity.ok(responseJson.toString());
+    // Check if a discipline with the same code and name already exists
+    Discipline existingDiscipline = disciplineService.getByCodeAndName(discipline.getCodeDiscip(), discipline.getNomDiscip());
+    if (existingDiscipline != null) {
+        // Discipline with the same code and name already exists
+        return new ResponseEntity<>("The discipline already exists in the database.", HttpStatus.BAD_REQUEST);
     }
 
+    // Insert the discipline
+    disciplineService.save(discipline);
+
+    return new ResponseEntity<>("Discipline inserted successfully", HttpStatus.CREATED);
+}
 
 
     @DeleteMapping("/delete/{id}")
@@ -117,6 +98,7 @@ public class DisciplineController {
         }
     }
     
+    
     @GetMapping("/all")
     public ResponseEntity<String> getAllDisciplines() {
         List<Discipline> disciplines = disciplineService.getAll();
@@ -147,18 +129,59 @@ public class DisciplineController {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("Please upload a file");
         }
-
+    
         try {
-            List<Discipline> discipline = ExcelHelper.excelToDisciplines(file.getInputStream());
-            disciplineService.saveAll(discipline);
+            List<Discipline> importedDisciplines = ExcelHelper.excelToDisciplines(file.getInputStream());
+            List<Discipline> existingDisciplines = disciplineService.getAll();
+    
+            List<Discipline> newDisciplines = new ArrayList<>();
+    
+            // Check if each imported discipline already exists in the database
+            for (Discipline importedDiscipline : importedDisciplines) {
+                boolean disciplineExists = false;
+                for (Discipline existingDiscipline : existingDisciplines) {
+                    if (importedDiscipline.getCodeDiscip().equals(existingDiscipline.getCodeDiscip())) {
+                        disciplineExists = true;
+                        break;
+                    }
+                }
+                // If discipline does not exist, add it to the list of new disciplines
+                if (!disciplineExists) {
+                    newDisciplines.add(importedDiscipline);
+                }
+            }
+    
+            // Save only the new disciplines
+            disciplineService.saveAll(newDisciplines);
+    
             return ResponseEntity.ok("Disciplines imported successfully");
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while importing disciplines");
         }
     }
-    
-    
+    @GetMapping("/search")
+public ResponseEntity<String> searchDisciplines(@RequestParam String query) {
+    List<Discipline> searchResults = disciplineService.search(query);
+    if (searchResults != null && !searchResults.isEmpty()) {
+        // Convert search results to JSON and return them
+        return ResponseEntity.ok(convertDisciplinesToJson(searchResults));
+    } else {
+        return ResponseEntity.notFound().build();
+    }
+}
+
+private String convertDisciplinesToJson(List<Discipline> disciplines) {
+    ArrayNode arrayNode = objectMapper.createArrayNode();
+    for (Discipline discipline : disciplines) {
+        ObjectNode disciplineNode = objectMapper.createObjectNode();
+        disciplineNode.put("id", discipline.getIdDiscip());
+        disciplineNode.put("codeDiscip", discipline.getCodeDiscip());
+        disciplineNode.put("nomDiscip", discipline.getNomDiscip());
+        arrayNode.add(disciplineNode);
+    }
+    return arrayNode.toString();
+}
 
 }
 	

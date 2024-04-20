@@ -11,20 +11,17 @@ import gestion_administrative.dao.DisciplineDao;
 import gestion_administrative.entities.Discipline;
 import gestion_administrative.service.DisciplineService;
 
-
 @Component
 @Transactional
 public class DisciplineServiceImpl implements DisciplineService {
     @Autowired
     private DisciplineDao disciplineDao;
 
-
     @Override
     @Transactional
     public Discipline save(Discipline discipline) {
         return this.disciplineDao.save(discipline);
     }
-    
 
     @Override
     public void delete(Discipline discipline) {
@@ -36,35 +33,35 @@ public class DisciplineServiceImpl implements DisciplineService {
         return this.disciplineDao.findAll();
     }
 
-	@Override
-	public Discipline getById(int id) {
-		 return this.disciplineDao.getOne(id);
-	}
+    @Override
+    public Discipline getById(int id) {
+        return this.disciplineDao.getOne(id);
+    }
 
-	@Override
-	public Discipline getByCodeAndName(String codeDiscip, String nomDiscip) {
-	    return this.disciplineDao.getByCodeAndName(codeDiscip, nomDiscip);
-	}
+    @Override
+    public Discipline getByCodeAndName(String codeDiscip, String nomDiscip) {
+        return this.disciplineDao.getByCodeAndName(codeDiscip, nomDiscip);
+    }
 
-
-   @Override
+    @Override
     public Discipline update(Discipline discipline) {
         return disciplineDao.save(discipline);
     }
 
+    @Override
+    public List<Discipline> saveAll(List<Discipline> discipline) {
+        return disciplineDao.saveAll(discipline);
+    }
 
-		@Override
-		public List<Discipline> saveAll(List<Discipline> discipline) {
-		return disciplineDao.saveAll(discipline)	;
-		}
+    @Override
+    public Discipline getBycodeDiscip(String codeDiscip) {
+        return disciplineDao.getBycodeDiscip(codeDiscip);
 
+    }
 
-		@Override
-		public Discipline getBycodeDiscip(String codeDiscip) {
-	        return disciplineDao.getBycodeDiscip(codeDiscip);
-	        		
-		}
-		
-		
+    @Override
+    public List<Discipline> search(String query) {
+        return disciplineDao.searchByCodeOrName(query);
+    }
 
 }
