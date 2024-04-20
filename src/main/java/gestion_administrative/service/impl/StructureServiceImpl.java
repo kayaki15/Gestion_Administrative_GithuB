@@ -8,12 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import gestion_administrative.dao.StructureDao;
-import gestion_administrative.entities.Etablissement;
 import gestion_administrative.entities.Structure;
 import gestion_administrative.service.StructureService;
-
-
-
 
 @Component
 @Transactional

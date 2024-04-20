@@ -3,7 +3,6 @@ package gestion_administrative.service;
 import java.util.List;
 
 import gestion_administrative.entities.Discipline;
-import gestion_administrative.entities.Etablissement;
 
 
 public interface DisciplineService {

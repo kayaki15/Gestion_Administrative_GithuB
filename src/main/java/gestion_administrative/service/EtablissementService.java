@@ -12,5 +12,4 @@ public interface EtablissementService {
 	public List<Etablissement> saveAll(List<Etablissement> etablissement);
 	public  Etablissement getByCode(String codeEtab) ; 
 
-
 }
