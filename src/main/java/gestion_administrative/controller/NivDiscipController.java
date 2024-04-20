@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import gestion_administrative.entities.Discipline;
 import gestion_administrative.entities.NivDiscip;
 import gestion_administrative.entities.Niveau;
-import gestion_administrative.entities.Structure;
 import gestion_administrative.helper.ExcelHelper;
 import gestion_administrative.service.DisciplineService;
 import gestion_administrative.service.NivDiscipService;

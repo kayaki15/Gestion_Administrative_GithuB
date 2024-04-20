@@ -7,7 +7,6 @@ import gestion_administrative.entities.Etablissement;
 import gestion_administrative.entities.NivDiscip;
 import gestion_administrative.entities.Niveau;
 import gestion_administrative.entities.Structure;
-import gestion_administrative.service.NiveauService;
 
 import java.io.IOException;
 import java.io.InputStream;

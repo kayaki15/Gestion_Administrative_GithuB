@@ -33,8 +33,6 @@ public class NivDiscip implements Serializable{
 		@JoinColumn(name = "idNiveau")
 		private Niveau niveau;
 
-
-
 }
     
 

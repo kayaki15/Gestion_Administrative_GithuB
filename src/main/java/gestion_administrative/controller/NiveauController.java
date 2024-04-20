@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import gestion_administrative.entities.Etablissement;
 import gestion_administrative.entities.Niveau;
 import gestion_administrative.helper.ExcelHelper;
 import gestion_administrative.service.NiveauService;
@@ -40,17 +38,6 @@ public class NiveauController {
     @Autowired
     private ObjectMapper objectMapper;
 
-
-//    @PostMapping("/insert")
-//    public ResponseEntity<String> insertNiveau(@RequestBody String niveauJson) throws JsonParseException, JsonMappingException, IOException {
-//        // Convertir le JSON en objet Niveau
-//        Niveau niveau = objectMapper.readValue(niveauJson, Niveau.class);
-//
-//        // Insérer l'employé
-//        niveauService.save(niveau);
-//
-//        return new ResponseEntity<>("Niveau inserted successfully", HttpStatus.CREATED);
-//    }
 
     @PostMapping("/insert")
     public ResponseEntity<String> insertNiveau(@RequestBody String niveauJson) throws JsonParseException, JsonMappingException, IOException {

@@ -38,17 +38,6 @@ public class DisciplineController {
     @Autowired
     private ObjectMapper objectMapper;
 
-
-//    @PostMapping("/insert")
-//    public ResponseEntity<String> insertDiscipline(@RequestBody String disciplineJson) throws JsonParseException, JsonMappingException, IOException {
-//        // Convertir le JSON en objet Discipline
-//        Discipline discipline = objectMapper.readValue(disciplineJson, Discipline.class);
-//
-//        // Insérer l'discipline
-//        disciplineService.save(discipline);
-//
-//        return new ResponseEntity<>("Discipline inserted successfully", HttpStatus.CREATED);
-//    }
     @PostMapping("/insert")
     public ResponseEntity<String> insertDiscipline(@RequestBody String disciplineJson) throws JsonParseException, JsonMappingException, IOException {
         // Convert the JSON to a Discipline object
@@ -68,36 +57,6 @@ public class DisciplineController {
     }
 
 
-
-//    @PutMapping("/update")
-//    public ResponseEntity<String> updateDiscipline(@RequestBody String disciplineJson) throws JsonParseException, JsonMappingException, IOException {
-//        // Convertir le JSON en objet Discipline
-//        Discipline discipline = objectMapper.readValue(disciplineJson, Discipline.class);
-//                
-//        // modifier l'discipline
-//        disciplineService.save(discipline);
-//
-//        return new ResponseEntity<>("Discipline updated successfully", HttpStatus.OK);
-//    }
-//    
-//    @PutMapping("/update")
-//    public ResponseEntity<String> updateDiscipline(@RequestBody String disciplineJson) throws JsonParseException, JsonMappingException, IOException {
-//        // Convert JSON to Discipline object
-//        Discipline discipline = objectMapper.readValue(disciplineJson, Discipline.class);
-//        
-//        // Update the discipline
-//        discipline = disciplineService.save(discipline);
-//
-//        // Return the updated discipline as JSON
-//        ObjectNode disciplineNode = objectMapper.createObjectNode();
-//        disciplineNode.put("id", discipline.getIdDiscip());
-//        disciplineNode.put("codeDiscip", discipline.getCodeDiscip());
-//        disciplineNode.put("nomDiscip", discipline.getNomDiscip());
-//
-//        return new ResponseEntity<>(disciplineNode.toString(), HttpStatus.OK);
-//    }
-
-    
     @PutMapping("/update")
     public ResponseEntity<String> updateDiscipline(@RequestBody JsonNode requestBody) {
         // Extract discipline ID from the request body

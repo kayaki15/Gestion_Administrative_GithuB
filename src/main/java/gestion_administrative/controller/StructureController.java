@@ -37,17 +37,6 @@ public class StructureController {
     @Autowired
     private ObjectMapper objectMapper;
 
-
-//    @PostMapping("/insert")
-//    public ResponseEntity<String> insertStructure(@RequestBody String structureJson) throws JsonParseException, JsonMappingException, IOException {
-//        // Convertir le JSON en objet Structure
-//        Structure structure = objectMapper.readValue(structureJson, Structure.class);
-//
-//        // Insérer l'employé
-//        structureService.save(structure);
-//
-//        return new ResponseEntity<>("Structure inserted successfully", HttpStatus.CREATED);
-//    }
     @PostMapping("/insert")
     public ResponseEntity<String> insertStructure(@RequestBody Structure structure) {
         // Check if the structure already exists
