@@ -1,7 +1,10 @@
 Gestion Administrative
 
 Description
-Ce projet de gestion administrative est conçu pour gérer les disciplines, les établissements, les niveaux et les structures dans un environnement éducatif.
+
++Le projet vise à créer un système de gestion administrative pour le département des ressources humaines. Le système gérera différents aspects des opérations RH telles que la gestion les actions disciplinaires et les structures organisationnelles telles que les départements et les niveaux de discipline. Cela facilitera une meilleure organisation et accessibilité des informations au sein du département RH.
+
+++Ce projet de gestion administrative est conçu pour gérer les disciplines, les établissements, les niveaux et les structures dans un environnement éducatif.
 
 Technologies Utilisées
 - Spring Boot
